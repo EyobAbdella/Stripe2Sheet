@@ -31,31 +31,6 @@ class CreateEvent(CreateModelMixin, GenericViewSet):
         return Response({"webhook_URL": webhook_url}, status=status.HTTP_201_CREATED)
 
 
-def write_sheet(user, sheet_id, values, range_name):
-    credentials = get_credentials(user)
-    if not credentials:
-        return None
-
-    service = build("sheets", "v4", credentials=credentials)
-    sheet = service.spreadsheets()
-
-    body = {"values": values}
-
-    result = (
-        sheet.values()
-        .append(
-            spreadsheetId=sheet_id,
-            range="Sheet1",
-            valueInputOption="RAW",
-            body=body,
-            insertDataOption="INSERT_ROWS",
-        )
-        .execute()
-    )
-
-    return result
-
-
 @csrf_exempt
 def stripe_webhook(request, id):
     try:
